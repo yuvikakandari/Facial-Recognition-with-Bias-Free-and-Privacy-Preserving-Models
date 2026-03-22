@@ -1,5 +1,4 @@
 from deepface import DeepFace
-import cv2
 
 def recognize_face(frame, db_path="dataset"):
     try:
@@ -11,10 +10,16 @@ def recognize_face(frame, db_path="dataset"):
 
         if len(result) > 0 and len(result[0]) > 0:
             identity = result[0].iloc[0]['identity']
-            name = identity.split("\\")[-2]  # folder name
-            return name, True
+            distance = result[0].iloc[0]['distance']
+
+            name = identity.split("\\")[-2]
+
+            # Convert distance → confidence
+            confidence = 1 - distance
+
+            return name, True, confidence
         else:
-            return "Unknown", False
+            return "Unknown", False, 0
 
     except:
-        return "Unknown", False
+        return "Unknown", False, 0
