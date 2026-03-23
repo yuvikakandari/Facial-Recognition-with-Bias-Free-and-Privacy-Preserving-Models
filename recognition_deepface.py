@@ -1,25 +1,41 @@
 from deepface import DeepFace
+import os
+import numpy as np
+import cv2
+from secure_storage import load_encrypted
 
-def recognize_face(frame, db_path="dataset"):
+FACES_DIR = "faces"
+
+def get_embedding(image):
+    embedding = DeepFace.represent(image, model_name="Facenet")[0]["embedding"]
+    return np.array(embedding)
+
+def recognize_face(face_img):
     try:
-        result = DeepFace.find(
-            img_path=frame,
-            db_path=db_path,
-            enforce_detection=False
-        )
+        input_embedding = get_embedding(face_img)
 
-        if len(result) > 0 and len(result[0]) > 0:
-            identity = result[0].iloc[0]['identity']
-            distance = result[0].iloc[0]['distance']
+        for file in os.listdir(FACES_DIR):
+            if file.endswith(".enc"):
+                path = os.path.join(FACES_DIR, file)
 
-            name = identity.split("\\")[-2]
+                # 🔓 LOAD + DECRYPT IMAGE
+                image_bytes = load_encrypted(path)
 
-            # Convert distance → confidence
-            confidence = 1 - distance
+                # Convert bytes → image
+                nparr = np.frombuffer(image_bytes, np.uint8)
+                stored_img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-            return name, True, confidence
-        else:
-            return "Unknown", False, 0
+                stored_embedding = get_embedding(stored_img)
 
-    except:
-        return "Unknown", False, 0
+                # Compare embeddings
+                distance = np.linalg.norm(input_embedding - stored_embedding)
+
+                if distance < 10:  # threshold (adjust if needed)
+                    name = file.split(".")[0]
+                    return name, True
+
+        return "Unknown", False
+
+    except Exception as e:
+        print("Error:", e)
+        return "Unknown", False
