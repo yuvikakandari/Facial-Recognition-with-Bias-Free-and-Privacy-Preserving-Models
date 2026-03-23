@@ -25,7 +25,7 @@ while True:
         face_img = frame[y:y+h, x:x+w]
 
         # 🔥 DeepFace recognition
-        name, recognized, confidence = recognize_face(face_img)
+        name, recognized = recognize_face(face_img)
 
         # 🎯 Stabilize label (reduces flicker)
         if frame_count % 5 == 0:
