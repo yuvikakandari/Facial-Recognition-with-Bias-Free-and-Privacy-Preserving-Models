@@ -56,6 +56,26 @@ def build_database():
 
     print("✅ Database ready")
 
+
+def recognize_face(face_img):
+    if not database:
+        build_database()
+
+    query_emb = get_embedding(face_img)
+    if query_emb is None:
+        return "Unknown", False, 0
+
+    best_match = "Unknown"
+    best_distance = float("inf")
+
+    for name, embeddings in database.items():
+        for emb in embeddings:
+            dist = np.linalg.norm(query_emb - emb)
+
+            if dist < best_distance:
+                best_distance = dist
+                best_match = name
+
     threshold = 10  # tune if needed
 
     if best_distance < threshold:
