@@ -79,7 +79,7 @@ def recognize_face(face_img):
     threshold = 0.9 
 
     if best_distance < threshold:
-        confidence = max(0, 100 - best_distance * 10)
+        confidence = max(0, (1 - best_distance) * 100)
         return best_match, True, confidence
     else:
         return "Unknown", False, 0
