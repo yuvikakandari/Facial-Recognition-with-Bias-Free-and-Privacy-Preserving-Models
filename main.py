@@ -44,9 +44,11 @@ while True:
         cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
 
         # Show label
-        cv2.putText(frame, label, (x, y-10),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.9,
-                    (0, 255, 0), 2)
+        display_text = f"{label} ({confidence:.1f}%)" if recognized else "Unknown"
+
+        cv2.putText(frame, display_text, (x, y-10),
+            cv2.FONT_HERSHEY_SIMPLEX, 0.9,
+            (0, 255, 0), 2)
 
     frame_count += 1
 
