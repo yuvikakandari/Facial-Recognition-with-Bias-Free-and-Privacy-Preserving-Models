@@ -1,41 +1,65 @@
-from deepface import DeepFace
 import os
 import numpy as np
 import cv2
+from deepface import DeepFace
 from secure_storage import load_encrypted
 
-FACES_DIR = "faces"
+# Cache embeddings for speed
+database = {}
+
+def load_all_faces():
+    files = []
+
+    # Load encrypted faces
+    for f in os.listdir("faces"):
+        files.append(os.path.join("faces", f))
+
+    return files
+
+
+def load_image(file_path):
+    data = load_encrypted(file_path)
+    nparr = np.frombuffer(data, np.uint8)
+    return cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
 
 def get_embedding(image):
-    embedding = DeepFace.represent(image, model_name="Facenet")[0]["embedding"]
-    return np.array(embedding)
-
-def recognize_face(face_img):
     try:
-        input_embedding = get_embedding(face_img)
+        embedding = DeepFace.represent(
+            image,
+            model_name="Facenet",
+            enforce_detection=False
+        )[0]["embedding"]
+        return np.array(embedding)
+    except:
+        return None
 
-        for file in os.listdir(FACES_DIR):
-            if file.endswith(".enc"):
-                path = os.path.join(FACES_DIR, file)
 
-                # 🔓 LOAD + DECRYPT IMAGE
-                image_bytes = load_encrypted(path)
+def build_database():
+    global database
 
-                # Convert bytes → image
-                nparr = np.frombuffer(image_bytes, np.uint8)
-                stored_img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    print("[INFO] Building face database...")
 
-                stored_embedding = get_embedding(stored_img)
+    for file_path in load_all_faces():
+        name = os.path.basename(file_path).split(".")[0]
 
-                # Compare embeddings
-                distance = np.linalg.norm(input_embedding - stored_embedding)
+        img = load_image(file_path)
+        emb = get_embedding(img)
 
-                if distance < 10:  # threshold (adjust if needed)
-                    name = file.split(".")[0]
-                    return name, True
+        if emb is None:
+            continue
 
-        return "Unknown", False
+        if name not in database:
+            database[name] = []
 
-    except Exception as e:
-        print("Error:", e)
-        return "Unknown", False
+        database[name].append(emb)
+
+    print("✅ Database ready")
+
+    threshold = 10  # tune if needed
+
+    if best_distance < threshold:
+        confidence = max(0, 100 - best_distance * 10)
+        return best_match, True, confidence
+    else:
+        return "Unknown", False, 0
