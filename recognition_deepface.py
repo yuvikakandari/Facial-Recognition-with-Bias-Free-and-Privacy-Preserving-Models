@@ -76,7 +76,7 @@ def recognize_face(face_img):
                 best_distance = dist
                 best_match = name
 
-    threshold = 0.9 
+    threshold = 1.0
     
     print(f"Match: {best_match}, Distance: {best_distance}")
     print(f"FINAL → {best_match}, distance: {best_distance}")
