@@ -81,7 +81,7 @@ def recognize_face(face_img):
     print(f"Match: {best_match}, Distance: {best_distance}")
     print(f"FINAL → {best_match}, distance: {best_distance}")
     if best_distance < threshold:
-        confidence = max(0, (1 - best_distance) * 100)
+        confidence = max(0, 100 - best_distance * 100)
         return best_match, True, confidence
     else:
         return "Unknown", False, 0
