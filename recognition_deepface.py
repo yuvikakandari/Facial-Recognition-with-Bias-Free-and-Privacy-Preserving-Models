@@ -30,7 +30,13 @@ def get_embedding(image):
             model_name="Facenet",
             enforce_detection=True
         )[0]["embedding"]
-        return np.array(embedding)
+        emb = np.array(embedding)
+
+        # 🔥 NORMALIZATION (CRITICAL FIX)
+        emb = emb / np.linalg.norm(emb)
+
+        return emb
+
     except:
         return None
 
@@ -73,7 +79,7 @@ def recognize_face(face_img):
 
     for name, embeddings in database.items():
         for emb in embeddings:
-            dist = np.linalg.norm(query_emb - emb)
+            dist = 1 - np.dot(query_emb, emb)
 
             if dist < best_distance:
                 second_best = best_distance
@@ -82,11 +88,11 @@ def recognize_face(face_img):
             elif dist < second_best:
                 second_best = dist
 
-    threshold = 1.0  # can tune later
+    threshold = 0.4  # can tune later
     print(f"{best_match} → best: {best_distance:.3f}, second: {second_best:.3f}")
 
     # 🔥 FINAL DECISION 
-    if best_distance < threshold and (second_best - best_distance) > 0.1:
+    if best_distance < threshold:
         confidence = max(0, 100 - best_distance * 100)
         return best_match, True, confidence
     else:
