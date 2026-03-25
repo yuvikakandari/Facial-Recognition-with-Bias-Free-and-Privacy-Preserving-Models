@@ -28,7 +28,7 @@ def get_embedding(image):
         embedding = DeepFace.represent(
             image,
             model_name="Facenet",
-            enforce_detection=False
+            enforce_detection=True
         )[0]["embedding"]
         return np.array(embedding)
     except:
