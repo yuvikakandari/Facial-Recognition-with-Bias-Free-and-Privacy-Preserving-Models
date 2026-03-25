@@ -24,6 +24,7 @@ def load_image(file_path):
 
 def get_embedding(image):
     try:
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         embedding = DeepFace.represent(
             image,
             model_name="Facenet",
