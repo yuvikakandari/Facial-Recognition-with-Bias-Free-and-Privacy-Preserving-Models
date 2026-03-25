@@ -28,8 +28,8 @@ while True:
         name, recognized, confidence = recognize_face(face_img)
 
         # 🎯 Stabilize label (reduces flicker)
-        if frame_count % 5 == 0:
-            prev_label = name if recognized else "Unknown"
+        if recognized:
+            prev_label = name 
 
         label = prev_label
 
