@@ -4,13 +4,12 @@ import cv2
 from deepface import DeepFace
 from secure_storage import load_encrypted
 
-# Cache embeddings for speed
+# Cache embeddings
 database = {}
 
 def load_all_faces():
     files = []
 
-    # Load encrypted faces
     for f in os.listdir("faces"):
         files.append(os.path.join("faces", f))
 
@@ -44,8 +43,10 @@ def build_database():
         name = os.path.basename(file_path).split(".")[0]
 
         img = load_image(file_path)
-        emb = get_embedding(img)
+        if img is None:
+            continue
 
+        emb = get_embedding(img)
         if emb is None:
             continue
 
@@ -67,20 +68,24 @@ def recognize_face(face_img):
 
     best_match = "Unknown"
     best_distance = float("inf")
+    second_best = float("inf") 
 
     for name, embeddings in database.items():
         for emb in embeddings:
             dist = np.linalg.norm(query_emb - emb)
 
             if dist < best_distance:
+                second_best = best_distance
                 best_distance = dist
                 best_match = name
+            elif dist < second_best:
+                second_best = dist
 
-    threshold = 1.0
-    
-    print(f"Match: {best_match}, Distance: {best_distance}")
-    print(f"FINAL → {best_match}, distance: {best_distance}")
-    if best_distance < threshold:
+    threshold = 1.0  # can tune later
+    print(f"{best_match} → best: {best_distance:.3f}, second: {second_best:.3f}")
+
+    # 🔥 FINAL DECISION 
+    if best_distance < threshold and (second_best - best_distance) > 0.1:
         confidence = max(0, 100 - best_distance * 100)
         return best_match, True, confidence
     else:
