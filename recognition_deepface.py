@@ -88,7 +88,7 @@ def recognize_face(face_img):
             elif dist < second_best:
                 second_best = dist
 
-    threshold = 0.4  # can tune later
+    threshold = 0.6  # can tune later
     print(f"{best_match} → best: {best_distance:.3f}, second: {second_best:.3f}")
 
     # 🔥 FINAL DECISION 
