@@ -11,7 +11,7 @@ def load_all_faces():
     files = []
 
     for f in os.listdir("faces"):
-        files.append(os.path.join("faces", f))
+        files.append(("custom", os.path.join("faces", f)))
 
     return files
 
