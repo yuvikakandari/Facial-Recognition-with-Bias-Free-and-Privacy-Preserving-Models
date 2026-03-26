@@ -63,6 +63,10 @@ def build_database():
         database[name].append(emb)
 
     print(f"✅ Database ready with {len(database)} people")
+    print("\n--- DATABASE CONTENT ---")
+    for name in database:
+        print(name, len(database[name]))
+    print("------------------------\n")
 
 
 def recognize_face(face_img):
