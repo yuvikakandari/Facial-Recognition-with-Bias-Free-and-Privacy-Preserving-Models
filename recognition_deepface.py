@@ -63,10 +63,15 @@ def build_database():
 
     print("[INFO] Building face database...")
 
-    for file_path in load_all_faces():
-        name = os.path.basename(file_path).split(".")[0]
+    for source, file_path in load_all_faces():
 
-        img = load_image(file_path)
+        if source == "custom":
+            name = os.path.basename(file_path).split(".")[0]
+
+        elif source == "lfw":
+            name = os.path.basename(os.path.dirname(file_path))
+
+        img = load_image(source, file_path)
         if img is None:
             continue
 
