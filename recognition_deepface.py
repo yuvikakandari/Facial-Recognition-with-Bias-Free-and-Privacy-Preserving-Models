@@ -13,8 +13,20 @@ def load_all_faces():
     for f in os.listdir("faces"):
         files.append(("custom", os.path.join("faces", f)))
 
-    return files
+     lfw_path = "lfw-deepfunneled"
 
+    if os.path.exists(lfw_path):
+        for person in os.listdir(lfw_path):
+            person_path = os.path.join(lfw_path, person)
+
+            if not os.path.isdir(person_path):
+                continue
+
+            for img_name in os.listdir(person_path):
+                img_path = os.path.join(person_path, img_name)
+                files.append(("lfw", img_path))
+
+    return files
 
 def load_image(file_path):
     data = load_encrypted(file_path)
