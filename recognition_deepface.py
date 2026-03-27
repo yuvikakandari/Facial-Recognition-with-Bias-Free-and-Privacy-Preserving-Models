@@ -82,6 +82,10 @@ def build_database():
         if name not in database:
             database[name] = []
 
+        # limit images per person 
+        if len(database[name]) < 8:
+            database[name].append(emb)
+
         database[name].append(emb)
 
     print(f"✅ Database ready with {len(database)} people")
