@@ -40,14 +40,16 @@ def load_image(source, file_path):
 def get_embedding(image):
     try:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        embedding = DeepFace.represent(
-            image,
+        result = DeepFace.represent(
+            img_path=image,
             model_name="Facenet",
-            enforce_detection=True
-        )[0]["embedding"]
+            enforce_detection=False  
+        )
+
+        embedding = result[0]["embedding"]
         emb = np.array(embedding)
 
-        # 🔥 NORMALIZATION (CRITICAL FIX)
+        #  NORMALIZATION
         emb = emb / np.linalg.norm(emb)
 
         return emb
