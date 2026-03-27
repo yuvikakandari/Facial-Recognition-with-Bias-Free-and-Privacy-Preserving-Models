@@ -28,11 +28,14 @@ def load_all_faces():
 
     return files
 
-def load_image(file_path):
-    data = load_encrypted(file_path)
-    nparr = np.frombuffer(data, np.uint8)
-    return cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+def load_image(source, file_path):
+    if source == "custom":
+        data = load_encrypted(file_path)
+        nparr = np.frombuffer(data, np.uint8)
+        return cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
+    elif source == "lfw":
+        return cv2.imread(file_path)
 
 def get_embedding(image):
     try:
