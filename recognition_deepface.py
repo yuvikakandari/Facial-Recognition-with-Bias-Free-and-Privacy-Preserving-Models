@@ -13,7 +13,7 @@ def load_all_faces():
     for f in os.listdir("faces"):
         files.append(("custom", os.path.join("faces", f)))
 
-     lfw_path = "lfw-deepfunneled"
+    lfw_path = "lfw-deepfunneled"
 
     if os.path.exists(lfw_path):
         for person in os.listdir(lfw_path):
@@ -121,7 +121,7 @@ def recognize_face(face_img):
     threshold = 0.6  # can tune later
     print(f"BEST MATCH: {best_match} → best: {best_distance:.3f}, second: {second_best:.3f}")
 
-    # 🔥 FINAL DECISION 
+    # FINAL DECISION 
     if best_distance < threshold:
         confidence = max(0, 100 - best_distance * 100)
         return best_match, True, confidence
