@@ -23,7 +23,7 @@ def load_all_faces():
                 continue
 
             for img_name in os.listdir(person_path):
-                img_path = os.path.join(person_path, img_name)
+                img_path = os.patssh.join(person_path, img_name)
                 files.append(("lfw", img_path))
 
     return files
@@ -37,19 +37,17 @@ def load_image(source, file_path):
     elif source == "lfw":
         return cv2.imread(file_path)
 
-def get_embedding(image):
+def get_embedding(image, model_name="Facenet"):
     try:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
         result = DeepFace.represent(
             img_path=image,
-            model_name="Facenet",
-            enforce_detection=False  
+            model_name=model_name,
+            enforce_detection=False
         )
 
-        embedding = result[0]["embedding"]
-        emb = np.array(embedding)
-
-        #  NORMALIZATION
+        emb = np.array(result[0]["embedding"])
         emb = emb / np.linalg.norm(emb)
 
         return emb
