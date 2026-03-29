@@ -107,7 +107,8 @@ def recognize_face(face_img):
 
     for name, embeddings in database.items():
         for emb in embeddings:
-            dist = 1 - np.dot(query_emb, emb)
+            dot_product = np.clip(np.dot(query_emb, emb), -1.0, 1.0)
+            dist = 1.0 - dot_product
 
             if dist < best_distance:
                 second_best = best_distance
