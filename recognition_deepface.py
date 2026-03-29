@@ -81,7 +81,7 @@ def build_database():
             database[name] = []
 
         # limit images per person 
-        if len(database[name]) < 8:
+        if len(database[name]) < 5:
             database[name].append(emb)
 
         database[name].append(emb)
