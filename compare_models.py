@@ -37,6 +37,9 @@ def load_data(model_name):
 
 
 def evaluate(data):
+    if not data:
+        print("Error: No data found for this model. Check image preprocessing or model loading.")
+        return 0, 0, 0, 0
     threshold = 0.6
 
     TP = TN = FP = FN = 0
@@ -63,6 +66,10 @@ def evaluate(data):
                 FP += 1
             else:
                 TN += 1
+
+    total_samples = TP + TN + FP + FN
+    if total_samples == 0:
+        return 0, 0, 0, 0
 
     acc = (TP + TN) / (TP + TN + FP + FN)
     prec = TP / (TP + FP + 1e-6)
