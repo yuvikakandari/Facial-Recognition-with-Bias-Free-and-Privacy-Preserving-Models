@@ -23,7 +23,7 @@ def load_all_faces():
                 continue
 
             for img_name in os.listdir(person_path):
-                img_path = os.patssh.join(person_path, img_name)
+                img_path = os.path.join(person_path, img_name)
                 files.append(("lfw", img_path))
 
     return files
